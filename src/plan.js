@@ -19,14 +19,14 @@ export const name=k=>F[k][0];
 
 export function dayPlan(S,d){
   return W[d].s.map((s,i)=>{const pool=P[s[2]],key=d+"-"+i;const idx=(S.v[key]!==undefined?S.v[key]:s[3])%pool.length;
-    return {key,t:s[0],n:s[1],note:s[4],pn:s[2],pool,idx,opt:pool[idx],m:macros(pool[idx].items)};});
+    return {key,t:s[0],n:s[1],pn:s[2],pool,idx,opt:pool[idx],m:macros(pool[idx].items)};});
 }
 export function total(S,plan,onlyDone){return plan.reduce((a,x)=>{if(onlyDone&&!S.done[x.key])return a;a.k+=x.m.k;a.p+=x.m.p;a.c+=x.m.c;a.g+=x.m.g;return a;},{k:0,p:0,c:0,g:0});}
 
 export function timeline(S,d){
   const items=dayPlan(S,d).map(x=>({type:"meal",t:x.t,key:x.key,x}));
   TRAIN[d].forEach((g,i)=>items.push({type:"gym",t:g[0],key:"g-"+d+"-"+i,title:g[1],note:g[2]}));
-  WATER[d].forEach((w,i)=>items.push({type:"water",t:w[0],key:"w-"+d+"-"+i,i,n:WATER[d].length,note:w[1]}));
+  WATER[d].forEach((w,i)=>items.push({type:"water",t:w[0],key:"w-"+d+"-"+i,i,n:WATER[d].length}));
   return items.sort((a,b)=>a.t.localeCompare(b.t)||(a.type==="water"?-1:1));
 }
 
@@ -36,7 +36,6 @@ export function consumed(S,x){const e=eaten(S,x);return macros(e?x.opt.items.fil
 
 // ---------- comida salteada: cómo recuperarla ----------
 const PROT=["bife","milapollo","milacarne","yogcol","huevo"], CARB=["arroz","fideos","granola","tostada","banana"];
-const PRE=["MER_PRE","ENTRE","PRE_KICK","DES_PARTIDO"];
 function addFor(meal,list,idx,need,fallback){
   const found=list.find(k=>meal.opt.items.some(i=>i.k===k))||fallback;
   const per=F[found][idx], u=F[found][1];
@@ -58,8 +57,8 @@ export function compensation(S,d){
   const defP=gaps.reduce((a,g)=>a+g.m.p,0), defC=gaps.reduce((a,g)=>a+g.m.c,0);
   const training=TRAIN[d].some(g=>g[0]>last)||d===4;
   const needC=defC*(training?1:0.7);
-  const res={gaps,defP,defC,training,byKey:{},extra:null,notes:[],rem,small:false};
-  if(defP<5&&defC<12){res.small=true;res.notes.push("Lo que faltó es poco: no hace falta compensar nada.");return res;}
+  const res={gaps,defP,defC,training,byKey:{},extra:null,rem,small:false};
+  if(defP<5&&defC<12){res.small=true;return res;}
   let gotP=0,gotC=0;
   if(rem.length){
     // se concentra en hasta 3 comidas: primero almuerzo/cena, nunca proteína justo antes de entrenar
@@ -79,12 +78,8 @@ export function compensation(S,d){
   if(leftP>=12){
     const q=Math.min(250,Math.max(100,Math.round(leftP/0.09/10)*10));
     const adds=[it("yogcol",q)]; if(needC-gotC>=25) adds.push(it("banana",1));
-    res.extra={adds,m:macros(adds),key:d+"-extra",t:rem.length?"Snack extra (cuando puedas, entre comidas)":"Antes de dormir"};
+    res.extra={adds,m:macros(adds),key:d+"-extra",t:rem.length?"Snack extra":"Antes de dormir"};
   }
-  if(gaps.some(g=>PRE.includes(g.x.pn)&&(g.full||g.m.c>=20))&&TRAIN[d].some(t=>t[0]>last))
-    res.notes.push("Te faltó parte de la comida previa a entrenar: si faltan más de 30 min, comé una banana o un yogur bebible. Un plato grande encima del entrenamiento cae pesado.");
-  if(!rem.length&&!res.extra) res.notes.push("No quedan comidas hoy y lo que falta es poco: no lo fuerces. Mañana seguís el plan normal.");
-  res.notes.push("Un día desordenado no cambia el resultado: lo que cuenta es el promedio de la semana. La prioridad al compensar es llegar a la proteína; los carbos, solo si todavía entrenás.");
   return res;
 }
 export const addsText=adds=>adds.map(a=>qty(a)+" de "+name(a.k).toLowerCase()).join(" + ");
@@ -115,12 +110,6 @@ export function dayClose(S,d,comp,OPEN){
   pend.forEach(t=>items.push({b:"Compensación sin hacer",t}));
   if(wOk<w.length) items.push({b:"Agua",t:(w.length-wOk)+(w.length-wOk>1?" termos":" termo")+" sin terminar ("+((w.length-wOk)*0.94).toFixed(1).replace(".",",")+" L)"});
   gMiss.forEach(i=>items.push({b:i.title,t:"sin marcar"}));
-  const pP=got.p/plan0.p;
-  let tip;
-  if(!items.length) tip="Día completo: no faltó nada.";
-  else if(pP>=0.9) tip="La proteína quedó cubierta, que es lo más importante. Mañana, plan normal.";
-  else tip="Quedaste corto de proteína. Mañana no dupliques todo de golpe: seguí el plan normal y, si querés, sumá 150 g de yogur colado en la merienda.";
-  if(wOk<w.length) tip+=" Arrancá mañana con el primer termo más temprano.";
   const rows=[row("Calorías",got.k,plan0.k,"kcal"),row("Proteínas",got.p,plan0.p,"g"),row("Carbohidratos",got.c,plan0.c,"g")];
-  return {closed,manual:!!S.closed[d],rows,pendMeals,items,tip};
+  return {closed,manual:!!S.closed[d],rows,pendMeals,items};
 }

@@ -17,7 +17,7 @@ export function Days({ S, onSelect }) {
         })}
       </div>
       <p className="weekavg" id="weekavg" style={{ margin: "0 0 14px" }}>
-        {"Promedio semanal: " + fmt(Math.round(sum / 7)) + " kcal por día. Debajo de cada letra, las kcal de ese día."}
+        {"Promedio semanal: " + fmt(Math.round(sum / 7)) + " kcal por día"}
       </p>
     </>
   );
@@ -29,7 +29,6 @@ export function DayBox({ d }) {
     <section className="daybox" id="daybox">
       <h2>{w.title}</h2>
       <div className="acts">{w.acts.map((a, i) => <span key={i} className={"act " + a[1]}>{a[0]}</span>)}</div>
-      <ul className="tips">{w.tips.map((t, i) => <li key={i}>{t}</li>)}</ul>
     </section>
   );
 }

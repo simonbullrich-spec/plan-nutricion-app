@@ -20,7 +20,6 @@ export default function App() {
   return (
     <div className="wrap">
       <h1>Plan de comidas para recomposición</h1>
-      <p className="lede">Más músculo, algo menos de grasa, con lo que ya comés. Armado sobre tu semana real: facultad, gimnasio, rugby y partido del sábado. Elegí el día y marcá comidas, entrenamientos y termos a medida que los completás.</p>
 
       <Days S={S} onSelect={(i) => upd((n) => { n.sel = i; })} />
       <DayBox d={S.sel} />
@@ -28,10 +27,9 @@ export default function App() {
 
       <Meals act={act} />
 
-      <Tabs S={S} />
+      <Tabs />
 
-      <button className="btn reset" id="reset" type="button" onClick={reset}>Desmarcar toda la semana (comidas, entrenamientos y agua)</button>
-      <p className="foot">Valores nutricionales aproximados (tablas estándar, alimentos cocidos). Es una guía de organización, no reemplaza el control con tu nutricionista.</p>
+      <button className="btn reset" id="reset" type="button" onClick={reset}>Desmarcar toda la semana</button>
     </div>
   );
 }

@@ -224,3 +224,13 @@ a{color:var(--pitch)}
   .time{padding:0}
   .bar{grid-template-columns:70px 1fr 74px;font-size:.82rem}
 }
+
+/* ítems comidos: círculos en vez de cuadrados */
+.items.pick input{appearance:none;-webkit-appearance:none;width:22px;height:22px;margin:0;border:2px solid var(--pitch);border-radius:50%;background:var(--card);display:grid;place-content:center;cursor:pointer;transition:background .15s}
+.items.pick input::before{content:"";width:9px;height:5px;border:solid var(--card);border-width:0 0 2.5px 2.5px;transform:translateY(-1px) rotate(-45deg);opacity:0}
+.items.pick input:checked{background:var(--pitch)}
+.items.pick input:checked::before{opacity:1}
+/* botón y solapa de "Ajuste del día" */
+.btn.adj{border-color:var(--yolk);color:var(--grain)}
+.btn.adj[aria-expanded="true"]{background:var(--yolk-2)}
+.comp .comp-add{margin-top:6px}
