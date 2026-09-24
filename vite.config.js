@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  // En GitHub Pages la app vive en /plan-nutricion-app/ (lo define el workflow de deploy)
+  base: process.env.BASE_PATH || "/",
   plugins: [
     react(),
     VitePWA({
