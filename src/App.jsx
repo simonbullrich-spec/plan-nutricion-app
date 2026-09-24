@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { loadState, saveState } from "./plan.js";
 import { Days, DayBox, Summary } from "./components/Week.jsx";
 import Meals from "./components/Meals.jsx";
-import Tabs from "./components/Tabs.jsx";
+import Drawer, { MenuButton } from "./components/Drawer.jsx";
 
 export default function App() {
   const [S, setS] = useState(loadState);
+  const [menu, setMenu] = useState(false);
+  const closeMenu = useCallback(() => setMenu(false), []);
   // comidas abiertas para destildar ítems (no se guarda, igual que en el original)
   const [open, setOpenSet] = useState(() => new Set());
 
@@ -19,15 +21,17 @@ export default function App() {
 
   return (
     <div className="wrap">
-      <h1>Plan de comidas para recomposición</h1>
+      <header className="top">
+        <MenuButton open={menu} onClick={() => setMenu(true)} />
+        <h1>Plan de comidas para recomposición</h1>
+      </header>
+      <Drawer open={menu} onClose={closeMenu} />
 
       <Days S={S} onSelect={(i) => upd((n) => { n.sel = i; })} />
       <DayBox d={S.sel} />
       <Summary S={S} d={S.sel} />
 
       <Meals act={act} />
-
-      <Tabs />
 
       <button className="btn reset" id="reset" type="button" onClick={reset}>Desmarcar toda la semana</button>
     </div>

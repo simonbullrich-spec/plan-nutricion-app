@@ -234,3 +234,17 @@ a{color:var(--pitch)}
 .btn.adj{border-color:var(--yolk);color:var(--grain)}
 .btn.adj[aria-expanded="true"]{background:var(--yolk-2)}
 .comp .comp-add{margin-top:6px}
+/* encabezado con botón de menú */
+.top{display:flex;align-items:flex-start;gap:12px}
+.top h1{flex:1;min-width:0}
+.icon-btn{flex:none;display:grid;place-items:center;width:44px;height:44px;border:1.5px solid var(--rule);border-radius:12px;background:var(--card);color:var(--ink);padding:0}
+.menu-btn{margin-top:4px}
+/* panel lateral: snacks, reemplazos y objetivo */
+.drawer-bg{position:fixed;inset:0;z-index:20;background:rgba(10,20,14,.45);opacity:0;pointer-events:none;transition:opacity .25s ease}
+.drawer-bg.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;left:0;bottom:0;z-index:21;width:min(88vw,440px);background:var(--paper);border-right:1px solid var(--rule);box-shadow:8px 0 30px -12px rgba(0,0,0,.35);overflow-y:auto;overscroll-behavior:contain;padding:calc(12px + env(safe-area-inset-top,0px)) 16px calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-102%);visibility:hidden;transition:transform .28s cubic-bezier(.2,.8,.2,1),visibility 0s linear .28s}
+.drawer.on{transform:none;visibility:visible;transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.drawer-head{display:flex;justify-content:flex-end}
+.drawer .tabs{margin:8px 0 14px}
+.drawer .cards{grid-template-columns:1fr}
+@media (prefers-reduced-motion:reduce){.drawer,.drawer.on,.drawer-bg{transition:none}}
