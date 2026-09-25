@@ -261,3 +261,8 @@ body:has(.home){background:linear-gradient(160deg,#2E6A45 0%,#2A6B72 55%,#2F4C8A
 .home-card span{font-family:var(--display);font-weight:700;font-size:1.6rem;line-height:1}
 .home-card:focus-visible{outline:3px solid #fff;outline-offset:3px}
 @media (prefers-reduced-motion:reduce){.home-card{transition:none}}
+/* fondo propio de cada sección: verde claro en nutrición (distinto del verde de las comidas marcadas, --pitch-2) */
+:root{--page:#E6F3DC}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#122218}}
+:root[data-theme="dark"]{--page:#122218}
+body{background:var(--page)}

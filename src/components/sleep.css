@@ -38,8 +38,13 @@
   --crit:#E07872; --crit-bg:#3A1E1C;
 }
 
-body:has(.sleep){background:var(--bg)}
-.sleep{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55;min-height:100vh}
+/* fondo azul marino, del color del logo de Sueño */
+:root{--navy:#232E63}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--navy:#131935}}
+:root[data-theme="dark"]{--navy:#131935}
+body:has(.sleep){background:var(--navy)}
+.sleep{background:var(--navy);color:var(--text);font-family:var(--sans);line-height:1.55;min-height:100vh}
+.sleep .sl-title{color:#fff}
 .sl-wrap{max-width:780px;margin:0 auto;padding:20px 22px 90px}
 .sleep h1,.sleep h2,.sleep h3{font-family:var(--serif);font-weight:500;margin:0;letter-spacing:-0.01em;line-height:inherit}
 .sleep p{margin:0}

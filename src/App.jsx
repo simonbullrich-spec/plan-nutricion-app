@@ -16,7 +16,12 @@ export default function App() {
     return () => window.removeEventListener("popstate", onHash);
   }, []);
 
-  useEffect(() => { document.title = view === "home" ? "Plan Nutrición" : VIEWS[view]; }, [view]);
+  useEffect(() => {
+    document.title = view === "home" ? "Plan Nutrición" : VIEWS[view];
+    // barra de estado del teléfono con el color de fondo de cada pantalla
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = { home: "#2E6A45", nutricion: "#E6F3DC", sueno: "#232E63" }[view];
+  }, [view]);
 
   const go = (v) => { history.pushState({ fromHome: true }, "", "#" + v); setView(v); window.scrollTo(0, 0); };
   // "‹ Inicio": si entramos desde el inicio, es lo mismo que el "atrás" del teléfono
