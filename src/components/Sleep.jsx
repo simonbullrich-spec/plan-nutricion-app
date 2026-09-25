@@ -78,22 +78,36 @@ function WeekSummary({ S }) {
   const total = mins.reduce((a, m) => a + m, 0);
   const short = DAYS.map((name, d) => [name, GOAL - mins[d]]).filter(([, m]) => m > 0);
   const missing = short.reduce((a, [, m]) => a + m, 0);
-  return (
-    <section className="sl-summary" aria-label="Resumen de la semana">
-      <h2>Resumen de la semana</h2>
-      <div className="sl-sum-stats">
-        <div><span>Horas dormidas</span><b>{dur(total)}</b></div>
-        <div><span>Promedio por día</span><b>{dur(Math.round(total / 7))}</b></div>
-        <div><span>Faltaron por día</span><b>{dur(Math.round(missing / 7))}</b></div>
+  const avg = Math.round(total / 7);
+  // mismas filas que el "Cierre del día" de nutrición (clases cl-row, sum-track, gaps…)
+  const row = (label, a, b) => {
+    const pct = Math.round(a / b * 100), st = pct >= 90 ? "ok" : pct >= 75 ? "mid" : "low";
+    return (
+      <div className={"cl-row " + st}>
+        <span>{label}</span>
+        <b>{dur(a)} <small>de {dur(b)}</small></b>
+        <em>{pct}%</em>
+        <div className="sum-track"><div style={{ width: Math.min(100, pct) + "%" }}></div></div>
       </div>
-      <p className="sl-sum-sub">Para llegar a 8 h cada noche</p>
+    );
+  };
+  return (
+    <article className="close sl-close" aria-label="Resumen de la semana">
+      <h3>Resumen de la semana</h3>
+      {row("Horas dormidas", total, GOAL * 7)}
+      {row("Promedio por día", avg, GOAL)}
       {short.length ? (
-        <ul className="sl-sum-list">
-          {short.map(([name, m]) => <li key={name}><span>{name}</span><b>−{dur(m)}</b></li>)}
-          <li className="total"><span>Total faltante</span><b>−{dur(missing)}</b></li>
-        </ul>
-      ) : <p className="sl-sum-ok">Llegaste a 8 h todos los días.</p>}
-    </section>
+        <>
+          <p className="cl-sub">Qué faltó para llegar a 8 h</p>
+          <ul className="gaps">
+            {short.map(([name, m]) => <li key={name}><b>{name}:</b> {dur(m)}</li>)}
+          </ul>
+        </>
+      ) : null}
+      <p className="cl-tip">
+        {short.length ? <>Faltaron <b>{dur(Math.round(missing / 7))} por día</b> ({dur(missing)} en la semana).</> : "Llegaste a 8 h todos los días."}
+      </p>
+    </article>
   );
 }
 
