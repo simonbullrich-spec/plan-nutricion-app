@@ -8,6 +8,8 @@ import "@fontsource/figtree/400.css";
 import "@fontsource/figtree/500.css";
 import "@fontsource/figtree/600.css";
 import "@fontsource/figtree/700.css";
+import "@fontsource-variable/fraunces/opsz.css";
+import "@fontsource-variable/inter/index.css";
 import "./index.css";
 import App from "./App.jsx";
 

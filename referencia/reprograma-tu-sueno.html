@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reprogramá tu sueño</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EDF0F6; --surface:#FFFFFF; --surface-2:#E4E8F1;
+    --text:#1B1E2B; --muted:#5B6072; --line:#D3D8E4;
+    --accent:#C9822E; --accent-ink:#7A4E12; --accent2:#4F5FA6;
+    --track:#DADFEA;
+    --ok:#3F8F63; --ok-bg:#E4F2E9;
+    --good:#7C8F2E; --good-bg:#EFF3DE;
+    --warn:#B4791E; --warn-bg:#F7EBD8;
+    --low:#B45A2E; --low-bg:#F7E3D8;
+    --crit:#B0453F; --crit-bg:#F7DFDD;
+    --radius:16px;
+    --serif:"Fraunces",Georgia,"Times New Roman",serif;
+    --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#12141F; --surface:#191C2B; --surface-2:#1F2333;
+      --text:#EDEEF5; --muted:#A0A5BD; --line:#2C3046;
+      --accent:#E6A75C; --accent-ink:#F4CE9A; --accent2:#93A1E8;
+      --track:#262A3D;
+      --ok:#6FC190; --ok-bg:#1B2F26;
+      --good:#B7CC5E; --good-bg:#2A2E1D;
+      --warn:#E0A94F; --warn-bg:#332813;
+      --low:#E08C58; --low-bg:#3A2417;
+      --crit:#E07872; --crit-bg:#3A1E1C;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12141F; --surface:#191C2B; --surface-2:#1F2333;
+    --text:#EDEEF5; --muted:#A0A5BD; --line:#2C3046;
+    --accent:#E6A75C; --accent-ink:#F4CE9A; --accent2:#93A1E8;
+    --track:#262A3D;
+    --ok:#6FC190; --ok-bg:#1B2F26;
+    --good:#B7CC5E; --good-bg:#2A2E1D;
+    --warn:#E0A94F; --warn-bg:#332813;
+    --low:#E08C58; --low-bg:#3A2417;
+    --crit:#E07872; --crit-bg:#3A1E1C;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);
+    line-height:1.55;padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);-webkit-font-smoothing:antialiased;}
+  img,svg{max-width:100%;}
+  .wrap{max-width:780px;margin:0 auto;padding:56px 22px 90px;}
+  h1,h2,h3{font-family:var(--serif);font-weight:500;margin:0;letter-spacing:-0.01em;}
+  p{margin:0;}
+
+  .hero{margin-bottom:60px;}
+  .kicker{display:flex;align-items:center;gap:8px;font-weight:600;font-size:0.9rem;
+    color:var(--accent-ink);margin-bottom:16px;letter-spacing:0.02em;}
+  .kicker svg{width:16px;height:16px;flex:none;}
+  .hero h1{font-size:clamp(2rem,5vw,2.75rem);line-height:1.1;margin-bottom:18px;max-width:15ch;}
+  .hero p.lead{font-size:1.06rem;color:var(--muted);max-width:58ch;margin-bottom:30px;}
+
+  .arc-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:26px 26px 20px;display:flex;gap:26px;align-items:center;flex-wrap:wrap;}
+  .arc-card svg{width:130px;height:90px;flex:none;}
+  .arc-stats{flex:1;min-width:200px;display:flex;gap:26px;flex-wrap:wrap;align-items:flex-end;}
+  .stat .num{font-family:var(--serif);font-size:2.3rem;line-height:1;}
+  .stat .num.accent{color:var(--accent-ink);}
+  .stat .label{font-size:0.84rem;color:var(--muted);margin-top:6px;}
+  .arrow-sep{font-family:var(--serif);font-size:1.6rem;color:var(--muted);padding-bottom:4px;}
+
+  section{margin-bottom:60px;}
+  .section-head{margin-bottom:24px;}
+  .section-head h2{font-size:1.5rem;margin-bottom:8px;}
+  .section-head p{color:var(--muted);max-width:58ch;font-size:0.96rem;}
+
+  .day-card{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--warn);
+    border-radius:var(--radius);padding:20px 22px 22px;margin-bottom:14px;}
+  .day-card.optimal{border-left-color:var(--ok);}
+  .day-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .day-top h3{font-size:1.15rem;display:flex;align-items:center;gap:8px;}
+  .check{color:var(--ok);font-size:1rem;}
+  .pill{font-size:0.76rem;color:var(--muted);background:var(--surface-2);border-radius:999px;
+    padding:4px 11px;white-space:nowrap;}
+
+  .row{display:flex;align-items:center;gap:14px;margin-bottom:9px;}
+  .row:last-of-type{margin-bottom:4px;}
+  .row .tag{width:52px;flex:none;font-size:0.76rem;color:var(--muted);font-weight:600;}
+  .track{position:relative;flex:1;height:22px;background:var(--track);border-radius:11px;overflow:hidden;}
+  .block{position:absolute;top:0;bottom:0;border-radius:11px;display:flex;align-items:center;justify-content:center;}
+  .row.now .block{background:var(--muted);opacity:0.55;}
+  .row.plan .block{background:var(--accent2);}
+  .row.opt .block{background:var(--ok);}
+  .row.now .block::after,.row.plan .block::after,.row.opt .block::after{
+    content:attr(data-dur);font-size:0.72rem;font-weight:600;color:#fff;white-space:nowrap;}
+  .ticks{display:flex;justify-content:space-between;padding-left:66px;font-size:0.7rem;color:var(--muted);margin-top:3px;}
+
+  .calc-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px 26px;}
+  .calc-controls{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:22px;}
+  .field{flex:1;min-width:150px;}
+  .field label{display:block;font-size:0.8rem;color:var(--muted);margin-bottom:7px;font-weight:600;}
+  .field select{width:100%;padding:11px 12px;font-size:1rem;font-family:var(--sans);
+    border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--text);appearance:none;}
+  .field select:focus-visible{outline:2px solid var(--accent2);outline-offset:2px;}
+  .result{border-radius:12px;padding:22px;transition:background 0.25s ease;}
+  .r-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+  .r-title{font-family:var(--serif);font-size:1.35rem;}
+  .r-hours{font-weight:700;font-size:1.1rem;}
+  p.r-desc{font-size:0.95rem;margin-bottom:14px;}
+  .meter{height:8px;border-radius:4px;background:rgba(0,0,0,0.12);overflow:hidden;}
+  .meter-fill{height:100%;border-radius:4px;transition:width 0.3s ease;}
+  .meter-note{font-size:0.75rem;color:var(--muted);margin-top:8px;}
+
+  .benefit-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media (max-width:560px){.benefit-grid{grid-template-columns:1fr;}}
+  .benefit{border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;background:var(--surface);}
+  .benefit .b-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .benefit svg{width:19px;height:19px;color:var(--accent-ink);flex:none;}
+  .benefit .b-title{font-weight:600;font-size:0.98rem;color:var(--text);}
+  .benefit p{font-size:0.9rem;color:var(--muted);}
+
+  .compare{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:18px;}
+  .c-box{flex:1;min-width:180px;border-radius:var(--radius);padding:20px;border:1px solid var(--line);background:var(--surface);}
+  .c-box.plan{border-color:var(--accent2);}
+  .c-label{font-size:0.8rem;color:var(--muted);margin-bottom:6px;}
+  .c-num{font-family:var(--serif);font-size:2rem;}
+  .fact{border-left:3px solid var(--accent2);padding:4px 0 4px 16px;margin-bottom:14px;}
+  .fact p{font-size:0.94rem;color:var(--text);}
+  .fact .src{font-size:0.77rem;color:var(--muted);margin-top:4px;display:block;}
+
+  .tip-list{list-style:none;margin:0;padding:0;}
+  .tip-list li{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);}
+  .tip-list li:last-child{border-bottom:none;}
+  .t-when{flex:none;width:96px;font-size:0.8rem;font-weight:600;color:var(--accent-ink);padding-top:2px;}
+  .tip-list p{font-size:0.95rem;}
+
+  footer{color:var(--muted);font-size:0.8rem;padding-top:10px;border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="hero">
+    <div class="kicker">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+      Plan de sueño personalizado
+    </div>
+    <h1>Tu semana no tiene un problema de voluntad. Tiene un problema de horarios.</h1>
+    <p class="lead">
+      De domingo a lunes ya dormís bien: te acostás cerca de la 1am y te levantás entre las 10 y las 10:30,
+      unas 9 horas. El problema son las cuatro noches de lunes a jueves, justo antes de entrar a la facultad
+      a las 7:15, donde caés a 6h50 en promedio. Con ajustes chicos en el horario de acostarte —no en tu
+      rutina— podés sumar hasta una hora extra en esas noches.
+    </p>
+    <div class="arc-card">
+      <svg viewBox="0 0 130 90">
+        <path d="M10 80 A55 55 0 0 1 120 80" fill="none" stroke="var(--track)" stroke-width="8" stroke-linecap="round"/>
+        <path d="M10 80 A55 55 0 0 1 78 26" fill="none" stroke="var(--accent2)" stroke-width="8" stroke-linecap="round"/>
+        <circle cx="10" cy="80" r="4.5" fill="var(--accent2)"/>
+        <circle cx="78" cy="26" r="4.5" fill="var(--accent2)"/>
+        <text x="65" y="88" text-anchor="middle" font-size="8" fill="var(--muted)" font-family="Inter">horas ganadas por noche</text>
+      </svg>
+      <div class="arc-stats">
+        <div class="stat"><div class="num">6h50</div><div class="label">Promedio actual<br>(lun–jue)</div></div>
+        <div class="arrow-sep">→</div>
+        <div class="stat"><div class="num accent">8h00</div><div class="label">Con el plan<br>mismas noches</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="semana">
+    <div class="section-head">
+      <h2>Tu semana, hora por hora</h2>
+      <p>Cada línea muestra la ventana de sueño real (gris) contra la sugerida (violeta), sobre un eje de 18:00 a 14:00 del día siguiente.</p>
+    </div>
+
+    <div class="day-card">
+      <div class="day-top"><h3>Lunes</h3><span class="pill">Sin entreno · facultad a las 7:15</span></div>
+      <div class="row now"><span class="tag">Hoy</span><div class="track"><div class="block" style="left:32.5%;width:33.75%" data-dur="6h45"></div></div></div>
+      <div class="row plan"><span class="tag">Plan</span><div class="track"><div class="block" style="left:25%;width:41.25%" data-dur="8h15"></div></div></div>
+      <div class="ticks"><span>18</span><span>22</span><span>02</span><span>06</span><span>10</span><span>14</span></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-top"><h3>Martes</h3><span class="pill">Entrenás hasta 22:30 · facultad 7:15</span></div>
+      <div class="row now"><span class="tag">Hoy</span><div class="track"><div class="block" style="left:32.5%;width:33.75%" data-dur="6h45"></div></div></div>
+      <div class="row plan"><span class="tag">Plan</span><div class="track"><div class="block" style="left:27.5%;width:38.75%" data-dur="7h45"></div></div></div>
+      <div class="ticks"><span>18</span><span>22</span><span>02</span><span>06</span><span>10</span><span>14</span></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-top"><h3>Miércoles</h3><span class="pill">Sin entreno · facultad 7:15</span></div>
+      <div class="row now"><span class="tag">Hoy</span><div class="track"><div class="block" style="left:30%;width:36.25%" data-dur="7h15"></div></div></div>
+      <div class="row plan"><span class="tag">Plan</span><div class="track"><div class="block" style="left:25%;width:41.25%" data-dur="8h15"></div></div></div>
+      <div class="ticks"><span>18</span><span>22</span><span>02</span><span>06</span><span>10</span><span>14</span></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-top"><h3>Jueves</h3><span class="pill">Entrenás hasta 22:30 · facultad 7:15</span></div>
+      <div class="row now"><span class="tag">Hoy</span><div class="track"><div class="block" style="left:32.5%;width:33.75%" data-dur="6h45"></div></div></div>
+      <div class="row plan"><span class="tag">Plan</span><div class="track"><div class="block" style="left:27.5%;width:38.75%" data-dur="7h45"></div></div></div>
+      <div class="ticks"><span>18</span><span>22</span><span>02</span><span>06</span><span>10</span><span>14</span></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-top"><h3>Viernes</h3><span class="pill">Salís o no · igual te levantás ~10:00 (rugby)</span></div>
+      <div class="row now"><span class="tag">Hoy</span><div class="track"><div class="block" style="left:35%;width:45%" data-dur="9h00"></div></div></div>
+      <div class="row plan"><span class="tag">Plan</span><div class="track"><div class="block" style="left:32.5%;width:47.5%" data-dur="9h30"></div></div></div>
+      <div class="ticks"><span>18</span><span>22</span><span>02</span><span>06</span><span>10</span><span>14</span></div>
+    </div>
+
+    <div class="day-card">
+      <div class="day-top"><h3>Sábado</h3><span class="pill">Siempre salís · te acostás ~6:00</span></div>
+      <div class="row now"><span class="tag">Hoy</span><div class="track"><div class="block" style="left:60%;width:30%" data-dur="6h00"></div></div></div>
+      <div class="row plan"><span class="tag">Plan</span><div class="track"><div class="block" style="left:55%;width:35%" data-dur="7h00"></div></div></div>
+      <div class="ticks"><span>18</span><span>22</span><span>02</span><span>06</span><span>10</span><span>14</span></div>
+    </div>
+
+    <div class="day-card optimal">
+      <div class="day-top"><h3>Domingo <span class="check">✓</span></h3><span class="pill">Sin facultad al otro día · ya dormís bien</span></div>
+      <div class="row opt"><span class="tag">Hoy</span><div class="track"><div class="block" style="left:35%;width:46.25%" data-dur="9h15"></div></div></div>
+      <div class="ticks"><span>18</span><span>22</span><span>02</span><span>06</span><span>10</span><span>14</span></div>
+    </div>
+  </section>
+
+  <section id="calculadora">
+    <div class="section-head">
+      <h2>¿Cuánto te afecta según la hora a la que te acuestes?</h2>
+      <p>Elegí una hora de acostarte y una de despertarte para ver el impacto estimado, según evidencia general sobre sueño y desempeño cognitivo.</p>
+    </div>
+    <div class="calc-card">
+      <div class="calc-controls">
+        <div class="field"><label for="bedtime">Te acostás a las</label><select id="bedtime"></select></div>
+        <div class="field"><label for="waketime">Te levantás a las</label><select id="waketime"></select></div>
+      </div>
+      <div class="result" id="result">
+        <div class="r-top"><div class="r-title" id="r-title">—</div><div class="r-hours" id="r-hours">—</div></div>
+        <p class="r-desc" id="r-desc"></p>
+        <div class="meter"><div class="meter-fill" id="r-meter"></div></div>
+        <p class="meter-note">Barra ilustrativa (horas de sueño respecto de 8h), no una medición médica.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="beneficios">
+    <div class="section-head">
+      <h2>Por qué te conviene, más allá de "estar cansado"</h2>
+      <p>El sueño no es tiempo perdido: es cuando pasan cosas concretas que te sirven todos los días.</p>
+    </div>
+    <div class="benefit-grid">
+      <div class="benefit">
+        <div class="b-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9.5 3a5.5 5.5 0 0 0-5.4 6.5A4.5 4.5 0 0 0 5 18h1M14.5 3a5.5 5.5 0 0 1 5.4 6.5A4.5 4.5 0 0 1 19 18h-1M9.5 3v15a2.5 2.5 0 0 0 5 0V3"/></svg><div class="b-title">Memoria y facultad</div></div>
+        <p>Mientras dormís, el cerebro consolida lo que estudiaste ese día. Cortar el sueño la noche antes de una clase o un parcial es cortar ese proceso a la mitad.</p>
+      </div>
+      <div class="benefit">
+        <div class="b-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6.5 6.5 4 9l3 3-3 3 2.5 2.5L9 15l3 3 3-3 2.5 2.5L20 15l-3-3 3-3-2.5-2.5L15 9l-3-3-3 3z"/></svg><div class="b-title">Recuperación del entreno</div></div>
+        <p>La mayor liberación de hormona de crecimiento y la reparación muscular ocurren en el sueño profundo. Entrenar fuerte y dormir poco esa noche deja la recuperación a medio hacer.</p>
+      </div>
+      <div class="benefit">
+        <div class="b-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.5-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 6c-2.5 4.5-9.5 9-9.5 9Z"/></svg><div class="b-title">Ánimo y sistema inmune</div></div>
+        <p>Dormir poco seguido se asocia a más irritabilidad y menor defensa inmunológica. Se nota primero en el humor, después en que te enfermás más seguido.</p>
+      </div>
+      <div class="benefit">
+        <div class="b-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg><div class="b-title">Tiempo de reacción</div></div>
+        <p>El tiempo de reacción y el criterio se degradan de forma medible con poco sueño, algo clave si después manejás, entrenás o rendís un examen a primera hora.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="mejora">
+    <div class="section-head">
+      <h2>Cuánto mejorarías durmiendo más</h2>
+      <p>Comparando tu semana actual contra el plan sugerido, y lo que dice la evidencia sobre esa diferencia.</p>
+    </div>
+    <div class="compare">
+      <div class="c-box"><div class="c-label">Promedio actual</div><div class="c-num">~7h25</div></div>
+      <div class="c-box plan"><div class="c-label">Promedio con el plan</div><div class="c-num">~8h15</div></div>
+    </div>
+    <div class="fact">
+      <p>Estudios sobre privación de sueño muestran que estar despierto entre 17 y 19 horas seguidas —lo que te pasa cuando te acostás pasada la 1am habiéndote levantado a las 7:15— deteriora el tiempo de reacción y el criterio a un nivel comparable al de un nivel de alcohol en sangre de alrededor de 0.05%.</p>
+      <span class="src">Fuente: investigación citada por la National Sleep Foundation y publicada en Occupational and Environmental Medicine.</span>
+    </div>
+    <div class="fact">
+      <p>En estudios donde se restringió el sueño a alrededor de 5 horas por noche durante varios días, los participantes mostraron hasta cinco veces más lapsos de atención y el doble de tiempo de reacción frente a un grupo que durmió 8 horas, incluso sin sentirse subjetivamente "más cansados".</p>
+      <span class="src">Fuente: estudio de restricción crónica de sueño publicado en PNAS.</span>
+    </div>
+    <div class="fact">
+      <p>Pasar de 6h50 a 8h00 esas cuatro noches clave no te lleva a un sueño "perfecto", pero te saca de la zona donde ese tipo de estudios empieza a mostrar caídas grandes en atención y reacción, justo antes de entrar a clase.</p>
+    </div>
+  </section>
+
+  <section id="tips">
+    <div class="section-head">
+      <h2>Cómo lo llevás a la práctica</h2>
+      <p>Nada de esto te pide dejar de entrenar ni de salir. Son ajustes puntuales en el horario.</p>
+    </div>
+    <ul class="tip-list">
+      <li><span class="t-when">Lunes</span><p>Es la continuación de tu domingo relajado: no hay entreno ni salida que lo compliquen. Acostarte a las 23:00 arranca la semana sumando casi 1h30 respecto a como venís haciéndolo.</p></li>
+      <li><span class="t-when">Mar / Jue</span><p>Dejá la cena semi-lista antes de entrenar (algo que solo tengas que calentar) y bañate con ducha corta. Esos 20-30 minutos ganados son la diferencia entre acostarte a las 00:30 y a las 23:30.</p></li>
+      <li><span class="t-when">Miércoles</span><p>Tu única noche sin entreno antes de un día de facultad: la más fácil de adelantar a las 23:00. Usala para reponer lo que perdés martes y jueves.</p></li>
+      <li><span class="t-when">Viernes</span><p>Si salís, poné una alarma mental de vuelta a la 1am: igual te despertás a las 10 para el rugby, así que cada hora antes que te acuestes es sueño directo.</p></li>
+      <li><span class="t-when">Sábado</span><p>No hace falta cambiar la noche de salida. Una siesta corta (20-30 min) el sábado a la tarde antes de salir reduce el golpe de dormir solo 6 horas esa noche.</p></li>
+      <li><span class="t-when">Domingo</span><p>Esta ya es tu mejor noche: 1am a 10-10:30, unas 9 horas. No la toques, es la base que te permite bancarte el resto de la semana.</p></li>
+    </ul>
+  </section>
+
+  <footer>Herramienta orientativa basada en hábitos y evidencia general sobre sueño. No reemplaza consejo médico; si la falta de sueño persiste o te genera malestar importante, vale la pena consultar a un profesional.</footer>
+</div>
+
+<script>
+(function(){
+  function pad(n){return n.toString().padStart(2,'0');}
+  function label(h,m){return pad(h)+":"+pad(m);}
+  function buildOptions(select,startH,endHInclusiveNextDay){
+    var totalSteps=((endHInclusiveNextDay-startH+24)%24)*4+4;
+    var h=startH,m=0;
+    for(var i=0;i<=totalSteps;i++){
+      var opt=document.createElement('option');
+      opt.value=(h*60+m); opt.textContent=label(h,m);
+      select.appendChild(opt);
+      m+=15; if(m>=60){m=0;h=(h+1)%24;}
+    }
+  }
+  var bedSel=document.getElementById('bedtime');
+  var wakeSel=document.getElementById('waketime');
+  buildOptions(bedSel,21,3);
+  buildOptions(wakeSel,5,13);
+  bedSel.value=(0*60+30);
+  wakeSel.value=(7*60+15);
+
+  var tiers=[
+    {min:480,title:'Óptimo',color:'var(--ok)',bg:'var(--ok-bg)',
+      desc:'Dormís 8 horas o más. Es el rango donde memoria, recuperación muscular y tiempo de reacción funcionan a pleno.'},
+    {min:420,title:'Bueno',color:'var(--good)',bg:'var(--good-bg)',
+      desc:'Entre 7 y 8 horas. Rendís cerca de tu máximo, con margen chico de mejora.'},
+    {min:360,title:'Regular',color:'var(--warn)',bg:'var(--warn-bg)',
+      desc:'Entre 6 y 7 horas. Empiezan a notarse atención más lenta e irritabilidad. Es tu zona actual entre semana.'},
+    {min:300,title:'Bajo',color:'var(--low)',bg:'var(--low-bg)',
+      desc:'Entre 5 y 6 horas. Estudios ubican este nivel cerca del deterioro de reacción comparable a un nivel bajo de alcohol en sangre.'},
+    {min:0,title:'Crítico',color:'var(--crit)',bg:'var(--crit-bg)',
+      desc:'Menos de 5 horas. Tiempo de reacción, memoria y ánimo se ven afectados de forma marcada.'},
+  ];
+
+  function update(){
+    var bed=parseInt(bedSel.value,10), wake=parseInt(wakeSel.value,10);
+    var mins=wake-bed; if(mins<=0) mins+=24*60;
+    var h=Math.floor(mins/60), m=mins%60;
+    var tier=tiers.find(function(t){return mins>=t.min;});
+    document.getElementById('r-title').textContent=tier.title;
+    document.getElementById('r-title').style.color=tier.color;
+    document.getElementById('r-hours').textContent=h+"h"+pad(m)+" de sueño";
+    document.getElementById('r-desc').textContent=tier.desc;
+    document.getElementById('result').style.background=tier.bg;
+    var pct=Math.max(6,Math.min(100,(mins/480)*100));
+    var meter=document.getElementById('r-meter');
+    meter.style.width=pct+"%"; meter.style.background=tier.color;
+  }
+  bedSel.addEventListener('change',update);
+  wakeSel.addEventListener('change',update);
+  update();
+})();
+</script>
+</body>
+</html>

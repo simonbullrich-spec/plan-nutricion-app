@@ -1,8 +1,11 @@
 # Plan Nutrición
 
-PWA instalable del plan de comidas semanal para recomposición corporal: comidas con opciones, ítems comidos, comidas salteadas con compensación, termos de agua, entrenamientos, resumen y cierre del día. Todo se guarda en `localStorage` y funciona offline.
+PWA instalable con dos secciones, elegibles desde la pantalla de inicio:
 
-Hecha con Vite + React + `vite-plugin-pwa`. El HTML original está en [`referencia/`](referencia/plan-comidas-recomposicion.html).
+- **Nutrición:** plan de comidas semanal para recomposición corporal: comidas con opciones, ítems comidos, comidas salteadas con compensación, termos de agua, entrenamientos, resumen y cierre del día.
+- **Sueño:** plan de sueño semanal, calculadora de horas y recomendaciones.
+
+Todo se guarda en `localStorage` y funciona offline. Hecha con Vite + React + `vite-plugin-pwa`. Los HTML originales están en [`referencia/`](referencia/).
 
 ```bash
 npm install

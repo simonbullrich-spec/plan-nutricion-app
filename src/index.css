@@ -248,3 +248,16 @@ a{color:var(--pitch)}
 .drawer .tabs{margin:8px 0 14px}
 .drawer .cards{grid-template-columns:1fr}
 @media (prefers-reduced-motion:reduce){.drawer,.drawer.on,.drawer-bg{transition:none}}
+/* botón para volver al inicio */
+.home-btn{display:inline-flex;align-items:center;gap:4px;margin-bottom:14px;border:1.5px solid var(--rule);background:var(--card);border-radius:999px;padding:6px 14px 6px 11px;font-size:.9rem;font-weight:600}
+/* pantalla de inicio */
+body:has(.home){background:linear-gradient(160deg,#2E6A45 0%,#2A6B72 55%,#2F4C8A 100%) no-repeat;min-height:100vh}
+.home{min-height:100vh;min-height:100dvh;display:grid;place-items:center;padding:24px 16px}
+.home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,190px));gap:18px;width:100%;justify-content:center}
+.home-card{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;border:1px solid rgba(255,255,255,.3);border-radius:28px;background:rgba(255,255,255,.14);color:#fff;box-shadow:0 12px 30px -14px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:transform .15s ease,background .15s ease}
+.home-card:hover{background:rgba(255,255,255,.2)}
+.home-card:active{transform:scale(.97)}
+.home-card svg{width:58%;height:auto;border-radius:22%;box-shadow:0 6px 16px -6px rgba(0,0,0,.4)}
+.home-card span{font-family:var(--display);font-weight:700;font-size:1.6rem;line-height:1}
+.home-card:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.home-card{transition:none}}

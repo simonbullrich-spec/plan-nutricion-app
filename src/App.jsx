@@ -1,39 +1,31 @@
-import { useCallback, useEffect, useState } from "react";
-import { loadState, saveState } from "./plan.js";
-import { Days, DayBox, Summary } from "./components/Week.jsx";
-import Meals from "./components/Meals.jsx";
-import Drawer, { MenuButton } from "./components/Drawer.jsx";
+import { useEffect, useState } from "react";
+import Home from "./components/Home.jsx";
+import Nutrition from "./components/Nutrition.jsx";
+import Sleep from "./components/Sleep.jsx";
+
+// Pantalla actual según el # de la dirección (así el "atrás" del teléfono vuelve al inicio)
+const VIEWS = { nutricion: "Nutrición", sueno: "Sueño" };
+const current = () => { const v = location.hash.slice(1); return VIEWS[v] ? v : "home"; };
 
 export default function App() {
-  const [S, setS] = useState(loadState);
-  const [menu, setMenu] = useState(false);
-  const closeMenu = useCallback(() => setMenu(false), []);
-  // comidas abiertas para destildar ítems (no se guarda, igual que en el original)
-  const [open, setOpenSet] = useState(() => new Set());
+  const [view, setView] = useState(current);
 
-  useEffect(() => { saveState(S); }, [S]);
+  useEffect(() => {
+    const onHash = () => { setView(current()); window.scrollTo(0, 0); };
+    window.addEventListener("popstate", onHash);
+    return () => window.removeEventListener("popstate", onHash);
+  }, []);
 
-  const upd = (fn) => setS((prev) => { const n = structuredClone(prev); fn(n); return n; });
-  const setOpen = (key, on) => setOpenSet((prev) => { const n = new Set(prev); on ? n.add(key) : n.delete(key); return n; });
-  const act = { S, upd, open, setOpen, cdone: (k, v) => upd((n) => { n.cdone[k] = v; }) };
+  useEffect(() => { document.title = view === "home" ? "Plan Nutrición" : VIEWS[view]; }, [view]);
 
-  const reset = () => upd((n) => { n.done = {}; n.tr = {}; n.wa = {}; n.skip = {}; n.eat = {}; n.cdone = {}; n.closed = {}; });
+  const go = (v) => { history.pushState({ fromHome: true }, "", "#" + v); setView(v); window.scrollTo(0, 0); };
+  // "‹ Inicio": si entramos desde el inicio, es lo mismo que el "atrás" del teléfono
+  const home = () => {
+    if (history.state?.fromHome) history.back();
+    else { history.replaceState(null, "", location.pathname + location.search); setView("home"); window.scrollTo(0, 0); }
+  };
 
-  return (
-    <div className="wrap">
-      <header className="top">
-        <MenuButton open={menu} onClick={() => setMenu(true)} />
-        <h1>Plan de comidas para recomposición</h1>
-      </header>
-      <Drawer open={menu} onClose={closeMenu} />
-
-      <Days S={S} onSelect={(i) => upd((n) => { n.sel = i; })} />
-      <DayBox d={S.sel} />
-      <Summary S={S} d={S.sel} />
-
-      <Meals act={act} />
-
-      <button className="btn reset" id="reset" type="button" onClick={reset}>Desmarcar toda la semana</button>
-    </div>
-  );
+  if (view === "nutricion") return <Nutrition onHome={home} />;
+  if (view === "sueno") return <Sleep onHome={home} />;
+  return <Home go={go} />;
 }
