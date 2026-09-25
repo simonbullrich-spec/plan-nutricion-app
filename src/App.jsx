@@ -5,7 +5,7 @@ import Sleep from "./components/Sleep.jsx";
 
 // Pantalla actual según el # de la dirección (así el "atrás" del teléfono vuelve al inicio)
 const VIEWS = { nutricion: "Nutrición", sueno: "Sueño" };
-const current = () => { const v = location.hash.slice(1); return VIEWS[v] ? v : "home"; };
+const current = () => { const v = location.hash.slice(1).split("/")[0]; return VIEWS[v] ? v : "home"; };
 
 export default function App() {
   const [view, setView] = useState(current);
