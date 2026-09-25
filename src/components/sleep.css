@@ -66,7 +66,11 @@ body:has(.sleep){background:var(--bg)}
 
 /* pantalla de un día */
 .sl-calc-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px}
-.sl-day-title{font-size:1.8rem;margin-bottom:18px}
+.sl-day-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:20px}
+.sl-day-title{font-size:1.8rem;text-align:center;flex:1}
+.sl-arrow{flex:none;display:grid;place-items:center;width:44px;height:44px;padding:0;border:1px solid var(--line);border-radius:50%;background:var(--surface-2);color:var(--text);cursor:pointer}
+.sl-arrow:active{transform:scale(.94)}
+.sl-arrow:focus-visible{outline:2px solid var(--accent2);outline-offset:2px}
 .sl-calc-controls{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:22px}
 .sl-field{flex:1;min-width:150px}
 .sl-field label,.sl-field-label{display:block;font-size:0.8rem;color:var(--muted);margin-bottom:7px;font-weight:600}

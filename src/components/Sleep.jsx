@@ -91,12 +91,23 @@ function Week({ S, openDay }) {
   );
 }
 
-function Day({ S, d, setTime }) {
+const Arrow = ({ dir }) => (
+  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+    <path d={dir < 0 ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"} fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+function Day({ S, d, setTime, goDay }) {
   const s = sleepOf(S, d), t = tierOf(s.mins), weekend = isWeekend(d);
   const pct = Math.max(6, Math.min(100, (s.mins / 480) * 100));
+  const prev = (d + 6) % 7, next = (d + 1) % 7;
   return (
     <div className="sl-calc-card">
-      <h2 className="sl-day-title">{DAYS[d]}</h2>
+      <div className="sl-day-nav">
+        <button type="button" className="sl-arrow" aria-label={"Día anterior: " + DAYS[prev]} onClick={() => goDay(prev)}><Arrow dir={-1} /></button>
+        <h2 className="sl-day-title">{DAYS[d]}</h2>
+        <button type="button" className="sl-arrow" aria-label={"Día siguiente: " + DAYS[next]} onClick={() => goDay(next)}><Arrow dir={1} /></button>
+      </div>
       <div className="sl-calc-controls">
         {weekend ? (
           <>
@@ -144,7 +155,9 @@ export default function Sleep({ onHome }) {
     if (history.state?.fromWeek) history.back();
     else { history.replaceState({ fromHome: true }, "", "#sueno"); setDay(null); }
   };
-  const setTime = (k, d, v) => setS((p) => { const n = structuredClone(p); n[k][d] = v; return n; });
+  // cambiar de día con las flechas sin sumar pasos al "atrás": este sigue volviendo a la semana
+  const goDay = (d) => { history.replaceState(history.state, "", "#sueno/" + d); setDay(d); };
+  const setTime =(k, d, v) => setS((p) => { const n = structuredClone(p); n[k][d] = v; return n; });
 
   return (
     <div className="sleep">
@@ -157,7 +170,7 @@ export default function Sleep({ onHome }) {
             <h1 className="sl-title">Sueño</h1>
             <Week S={S} openDay={openDay} />
           </>
-        ) : <Day S={S} d={day} setTime={setTime} />}
+        ) : <Day S={S} d={day} setTime={setTime} goDay={goDay} />}
       </div>
     </div>
   );
