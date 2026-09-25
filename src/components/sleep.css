@@ -46,10 +46,20 @@ body:has(.sleep){background:var(--bg)}
 .sleep .home-btn{margin-bottom:20px;border-color:var(--line);background:var(--surface);color:var(--text)}
 .sl-title{font-size:clamp(2rem,5vw,2.75rem);line-height:1.1;margin-bottom:18px}
 
-/* promedio semanal */
-.sl-avg{display:flex;justify-content:space-between;align-items:baseline;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 22px;margin-bottom:14px}
-.sl-avg span{font-size:0.84rem;color:var(--muted);font-weight:600}
-.sl-avg b{font-family:var(--serif);font-weight:500;font-size:1.8rem;line-height:1}
+/* resumen de la semana (debajo del domingo) */
+.sl-summary{background:var(--surface);border:1.5px solid var(--accent2);border-radius:var(--radius);padding:20px 22px;margin-top:4px}
+.sl-summary h2{font-size:1.3rem;margin-bottom:14px}
+.sl-sum-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sl-sum-stats div{background:var(--surface-2);border-radius:12px;padding:12px 10px}
+.sl-sum-stats span{display:block;font-size:0.74rem;color:var(--muted);font-weight:600;line-height:1.25;margin-bottom:6px}
+.sl-sum-stats b{font-family:var(--serif);font-weight:500;font-size:1.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.sl-sum-sub{font-size:0.8rem;color:var(--muted);font-weight:600;margin:18px 0 6px!important}
+.sl-sum-list{list-style:none;margin:0;padding:0}
+.sl-sum-list li{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px dashed var(--line);font-size:0.95rem}
+.sl-sum-list b{color:var(--low);font-variant-numeric:tabular-nums}
+.sl-sum-list li.total{border-bottom:0;font-weight:600}
+.sl-sum-ok{color:var(--ok);font-weight:600}
+@media (max-width:380px){.sl-sum-stats b{font-size:1.35rem}}
 
 /* tarjeta de cada día (se toca para abrirla) */
 .sl-day-card{display:block;width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:var(--radius);padding:18px 22px 20px;margin-bottom:14px;transition:transform .12s ease}

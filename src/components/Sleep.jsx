@@ -70,11 +70,36 @@ function TimeSelect({ id, label, value, options, onChange }) {
   );
 }
 
+const GOAL = 480; // 8 h por noche: el piso de "Óptimo"
+
+// Resumen de la semana: total, promedio y lo que faltó para llegar a 8 h cada día
+function WeekSummary({ S }) {
+  const mins = DAYS.map((_, d) => sleepOf(S, d).mins);
+  const total = mins.reduce((a, m) => a + m, 0);
+  const short = DAYS.map((name, d) => [name, GOAL - mins[d]]).filter(([, m]) => m > 0);
+  const missing = short.reduce((a, [, m]) => a + m, 0);
+  return (
+    <section className="sl-summary" aria-label="Resumen de la semana">
+      <h2>Resumen de la semana</h2>
+      <div className="sl-sum-stats">
+        <div><span>Horas dormidas</span><b>{dur(total)}</b></div>
+        <div><span>Promedio por día</span><b>{dur(Math.round(total / 7))}</b></div>
+        <div><span>Faltaron por día</span><b>{dur(Math.round(missing / 7))}</b></div>
+      </div>
+      <p className="sl-sum-sub">Para llegar a 8 h cada noche</p>
+      {short.length ? (
+        <ul className="sl-sum-list">
+          {short.map(([name, m]) => <li key={name}><span>{name}</span><b>−{dur(m)}</b></li>)}
+          <li className="total"><span>Total faltante</span><b>−{dur(missing)}</b></li>
+        </ul>
+      ) : <p className="sl-sum-ok">Llegaste a 8 h todos los días.</p>}
+    </section>
+  );
+}
+
 function Week({ S, openDay }) {
-  const avg = Math.round(DAYS.reduce((a, _, d) => a + sleepOf(S, d).mins, 0) / 7);
   return (
     <>
-      <div className="sl-avg"><span>Promedio semanal</span><b>{dur(avg)}</b></div>
       {DAYS.map((name, d) => {
         const s = sleepOf(S, d), t = tierOf(s.mins);
         return (
@@ -87,6 +112,7 @@ function Week({ S, openDay }) {
           </button>
         );
       })}
+      <WeekSummary S={S} />
     </>
   );
 }
